@@ -23,7 +23,7 @@ Add this to your `pubspec.yaml`:
 ```yaml
 dependencies:
   profile_name_avatar: ^0.0.3
-
+```
 
 ## Usage
 
@@ -33,7 +33,7 @@ import 'package:profile_name_avatar/profile_name_avatar.dart';
 ProfileImage(
   imageSource: "https://example.com/avatar.jpg",
   placeholder: "assets/images/placeholder.png",     // Fallback when imagesource fail
-  fallbackName: "J D",                         // Used when image & placeholder fail
+  fallbackName: "J D",                              // Used when image & placeholder fail
   radius: 100,                                      // Optional
   textStyle: TextStyle(                             // Optional
     fontSize: 24,
