@@ -2,18 +2,20 @@ library profile_name_avatar;
 
 import 'package:flutter/material.dart';
 
-/// A widget that shows user initials in a circular avatar with background color.
+/// A customizable circular profile avatar that displays up to the first
+/// four letters of the provided name.
 ///
-/// It automatically extracts initials from the name and assigns a consistent
-/// background color unless a custom one is provided.
+/// If no [radius] is provided, the widget will adapt to its parent
+/// container's size using [LayoutBuilder].
 class ProfileAvatar extends StatelessWidget {
-  /// Full name of the user (e.g., "Sarbath Shameer")
+  /// Full name of the user (e.g., "Sarbath Shameer").
   final String name;
 
-  /// Radius of the circular avatar
-  final double radius;
+  /// Optional radius of the circular avatar.
+  /// If null, size will adapt to parent container via LayoutBuilder.
+  final double? radius;
 
-  /// Optional custom text style
+  /// Optional custom text style for the displayed letters.
   final TextStyle? textStyle;
 
   /// Optional background color. If null, a color will be generated from name hash.
@@ -22,19 +24,22 @@ class ProfileAvatar extends StatelessWidget {
   const ProfileAvatar({
     Key? key,
     required this.name,
-    this.radius = 24.0,
+    this.radius,
     this.textStyle,
     this.backgroundColor,
   }) : super(key: key);
 
-  String getInitials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty) return '';
-    String initials = parts[0][0];
-    if (parts.length > 1) initials += parts[1][0];
-    return initials.toUpperCase();
+  /// Extracts up to the first four letters from the name.
+  /// If the name is shorter than four letters, returns it as is.
+  String getFirstLetters(String name) {
+    final cleaned = name.trim().replaceAll(RegExp(r'\s+'), '');
+    if (cleaned.isEmpty) return '';
+    return cleaned
+        .substring(0, cleaned.length < 4 ? cleaned.length : 4)
+        .toUpperCase();
   }
 
+  /// Generates a consistent background color based on the input string's hash.
   Color generateColor(String input) {
     final colors = [
       Colors.red,
@@ -52,20 +57,35 @@ class ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initials = getInitials(name);
+    final letters = getFirstLetters(name);
     final bgColor = backgroundColor ?? generateColor(name);
-    return CircleAvatar(
-      backgroundColor: bgColor,
-      radius: radius,
-      child: Text(
-        initials,
-        style: textStyle ??
-            TextStyle(
-              color: Colors.white,
-              fontSize: radius * 0.6,
-              fontWeight: FontWeight.bold,
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Use provided radius or compute from parent container size
+        final double effectiveRadius =
+            radius ?? constraints.biggest.shortestSide / 2;
+
+        // Scale text size based on radius
+        final double fontSize = effectiveRadius * 0.3;
+
+        return CircleAvatar(
+          backgroundColor: bgColor,
+          radius: radius,
+          child: Center(
+            child: Text(
+              letters,
+              textAlign: TextAlign.center,
+              style: textStyle ??
+                  TextStyle(
+                    color: Colors.white,
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
