@@ -22,7 +22,7 @@ Add this to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  profile_name_avatar: ^0.0.3
+  profile_name_avatar: ^0.0.4
 ```
 
 ## Usage
